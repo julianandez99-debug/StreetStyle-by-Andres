@@ -2,236 +2,177 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🛍️ StreetStyle - Tienda Urbana de Juan Andrés López</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background-color: #f5f0e8; /* beige claro */
-      color: #1c1c1c; /* negro suave */
-      padding: 20px;
-      text-align: center;
+      background-color: #f7f7f7;
       margin: 0;
+      padding: 0;
     }
 
-    h1 {
-      color: #000;
-      background-color: #e6ddc6; /* beige medio */
+    header {
+      background-color: #111;
+      color: white;
       padding: 15px;
-      border-radius: 10px;
-      width: fit-content;
-      margin: 20px auto;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      text-align: center;
     }
 
-    #productos {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+    .contenedor {
+      display: grid;
+      grid-template-columns: 3fr 1fr;
       gap: 20px;
-      margin-top: 20px;
+      padding: 20px;
+    }
+
+    .productos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
     }
 
     .producto {
-      border: 1px solid #ccc;
-      background: #fffaf3; /* beige muy claro */
+      background: white;
+      padding: 10px;
       border-radius: 10px;
-      padding: 15px;
-      width: 230px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-    }
-
-    .producto:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
     }
 
     .producto img {
       width: 100%;
-      height: 160px;
+      border-radius: 10px;
+      height: 200px;
       object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .producto h3 {
-      font-size: 1em;
-      color: #111;
-      margin-bottom: 5px;
-    }
-
-    .producto p {
-      margin: 4px 0;
-    }
-
-    button {
-      background-color: #1c1c1c;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #4a4a4a;
     }
 
     .carrito {
-      margin-top: 40px;
-      background: #fffaf3;
-      padding: 20px;
+      background: white;
+      padding: 15px;
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 90%;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     .carrito h2 {
-      margin-bottom: 15px;
+      margin-top: 0;
     }
 
-    ul {
-      list-style: none;
-      padding: 0;
+    .filtro {
+      text-align: center;
+      margin: 10px 0;
     }
 
-    li {
-      background: #f1e9d2;
-      margin: 8px 0;
-      padding: 10px;
-      border-radius: 8px;
-    }
-
-    .contador {
-      background: #ff3b3b;
+    button {
+      background-color: #111;
       color: white;
-      border-radius: 50%;
-      padding: 3px 8px;
-      font-size: 0.9em;
-      vertical-align: top;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
     }
 
-    .botones-carrito {
-      display: flex;
-      justify-content: space-between;
+    button:hover {
+      background-color: #333;
+    }
+
+    .paypal-container {
       margin-top: 15px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>StreetStyle - Tienda Urbana de Juan Andrés López</h1>
+  </header>
 
-  <h1>🛍️ StreetStyle - Tienda Urbana de Juan Andrés López</h1>
+  <div class="filtro">
+    <button onclick="filtrar('todos')">Todos</button>
+    <button onclick="filtrar('camisetas')">Camisetas</button>
+    <button onclick="filtrar('pantalones')">Pantalones</button>
+    <button onclick="filtrar('accesorios')">Accesorios</button>
+  </div>
 
-  <div id="productos"></div>
+  <div class="contenedor">
+    <div id="productos" class="productos"></div>
 
-  <div class="carrito">
-    <h2>🧾 Carrito de Compras (<span id="cantidad-carrito">0</span> productos)</h2>
-    <ul id="lista-carrito"></ul>
-    <p><strong>Total: $<span id="total">0.00</span> COP</strong></p>
-    <div class="botones-carrito">
-      <button onclick="vaciarCarrito()">🧼 Vaciar Carrito</button>
-      <button onclick="finalizarCompra()">💳 Finalizar Compra</button>
+    <div class="carrito">
+      <h2>🛒 Carrito</h2>
+      <ul id="listaCarrito"></ul>
+      <p><strong>Total:</strong> <span id="total"></span></p>
+      <button onclick="vaciarCarrito()">Vaciar carrito</button>
+      <div id="paypal-button-container" class="paypal-container"></div>
     </div>
   </div>
 
+  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=COP"></script>
   <script>
     const productos = [
-      { id: 1, nombre: "Hoodie “Black Street”", categoria: "Hoodies", precio: 120000, imagen: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL2yQ9XqKuPjmCaAdCJW7u-tFujta3R5H_Mg&s" },
-      { id: 2, nombre: "Hoodie “Retro Gray”", categoria: "Hoodies", precio: 115000, imagen: "https://dsrcv.com/cdn/shop/files/vintagegreyhoodie.jpg?v=1756292854" },
-      { id: 3, nombre: "Gorra “NYC Flat”", categoria: "Gorras", precio: 75000, imagen: "https://static.caphunters.cy/43776-large_default/new-era-flat-brim-9fifty-floral-new-york-yankees-mlb-white-and-blue-snapback-cap.webp" },
-      { id: 4, nombre: "Gorra “Classic White”", categoria: "Gorras", precio: 70000, imagen: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdvuOQl8X4B_VVjNSPfsaMy50Tx0pdPaYFAg&s" },
-      { id: 5, nombre: "Buso Oversize “Storm”", categoria: "Busos oversize", precio: 95000, imagen: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToaXU-ipOyiGe7B-_yEDddqcK8KKFvWLXiOg&s" },
-      { id: 6, nombre: "Buso Oversize “Skyline”", categoria: "Busos oversize", precio: 99000, imagen: "https://acdn-us.mitiendanube.com/stores/903/627/products/skyline-hoodie-back-36f2fdf3286df4ec7917585505648360-1024-1024.png" }
+      { id: 1, nombre: "Camiseta Oversize Negra", precio: 85000, categoria: "camisetas", imagen: "https://i.imgur.com/RcHkZgP.jpg" },
+      { id: 2, nombre: "Jean Cargo Beige", precio: 120000, categoria: "pantalones", imagen: "https://i.imgur.com/MbXgCkg.jpg" },
+      { id: 3, nombre: "Gorra StreetStyle", precio: 60000, categoria: "accesorios", imagen: "https://i.imgur.com/6jKJv6M.jpg" },
+      { id: 4, nombre: "Camiseta Blanca Street", precio: 75000, categoria: "camisetas", imagen: "https://i.imgur.com/02F2sHg.jpg" },
+      { id: 5, nombre: "Pantalón Jogger Gris", precio: 95000, categoria: "pantalones", imagen: "https://i.imgur.com/6VQkBbH.jpg" },
     ];
 
-    let carrito = [];
+    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-    const contenedor = document.getElementById('productos');
-    const listaCarrito = document.getElementById('lista-carrito');
-    const total = document.getElementById('total');
-    const cantidadCarrito = document.getElementById('cantidad-carrito');
+    const contenedorProductos = document.getElementById("productos");
+    const listaCarrito = document.getElementById("listaCarrito");
+    const totalSpan = document.getElementById("total");
+    const paypalContainer = document.getElementById("paypal-button-container");
 
-    function mostrarProductos() {
-      productos.forEach(p => {
-        const div = document.createElement('div');
-        div.classList.add('producto');
+    const formatoCOP = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' });
+
+    function renderProductos(lista) {
+      contenedorProductos.innerHTML = "";
+      lista.forEach(prod => {
+        const div = document.createElement("div");
+        div.classList.add("producto");
         div.innerHTML = `
-          <img src="${p.imagen}" alt="${p.nombre}">
-          <h3>${p.nombre}</h3>
-          <p>${p.categoria}</p>
-          <p><strong>$${p.precio.toLocaleString('es-CO')} COP</strong></p>
-          <button onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
+          <img src="${prod.imagen}" alt="${prod.nombre}">
+          <h3>${prod.nombre}</h3>
+          <p>${formatoCOP.format(prod.precio)}</p>
+          <button onclick="agregarAlCarrito(${prod.id})">Agregar al carrito</button>
         `;
-        contenedor.appendChild(div);
+        contenedorProductos.appendChild(div);
       });
+    }
+
+    function filtrar(categoria) {
+      if (categoria === "todos") renderProductos(productos);
+      else {
+        const filtrados = productos.filter(p => p.categoria === categoria);
+        renderProductos(filtrados);
+      }
     }
 
     function agregarAlCarrito(id) {
       const producto = productos.find(p => p.id === id);
-      const existente = carrito.find(item => item.id === id);
-
+      const existente = carrito.find(p => p.id === id);
       if (existente) {
         existente.cantidad++;
       } else {
         carrito.push({ ...producto, cantidad: 1 });
       }
-      actualizarCarrito();
+      guardarYRender();
     }
 
-    function actualizarCarrito() {
-      listaCarrito.innerHTML = '';
-      let totalCompra = 0;
-      let cantidadTotal = 0;
+    function guardarYRender() {
+      localStorage.setItem("carrito", JSON.stringify(carrito));
+      renderCarrito();
+    }
 
-      carrito.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.textContent = `${item.nombre} (x${item.cantidad}) - $${(item.precio * item.cantidad).toLocaleString('es-CO')} COP`;
-        li.innerHTML += ` <button onclick="eliminarDelCarrito(${index})">❌</button>`;
+    function renderCarrito() {
+      listaCarrito.innerHTML = "";
+      let total = 0;
+      carrito.forEach(p => {
+        total += p.precio * p.cantidad;
+        const li = document.createElement("li");
+        li.textContent = `${p.nombre} x${p.cantidad} - ${formatoCOP.format(p.precio * p.cantidad)}`;
         listaCarrito.appendChild(li);
-
-        totalCompra += item.precio * item.cantidad;
-        cantidadTotal += item.cantidad;
       });
-
-      total.textContent = totalCompra.toLocaleString('es-CO');
-      cantidadCarrito.textContent = cantidadTotal;
+      totalSpan.textContent = formatoCOP.format(total);
+      renderPayPal(total);
     }
-
-    function eliminarDelCarrito(index) {
-      carrito.splice(index, 1);
-      actualizarCarrito();
-    }
-
-    function vaciarCarrito() {
-      if (carrito.length === 0) {
-        alert("🛒 El carrito ya está vacío.");
-        return;
-      }
-      if (confirm("¿Seguro que deseas vaciar el carrito?")) {
-        carrito = [];
-        actualizarCarrito();
-        alert("🧼 Carrito vaciado con éxito.");
-      }
-    }
-
-    function finalizarCompra() {
-      if (carrito.length === 0) {
-        alert("❌ No tienes productos en el carrito.");
-        return;
-      }
-
-      let totalCompra = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
-      alert(`✅ ¡Gracias por tu compra en StreetStyle!\nTu estilo está en camino 🖤\nTotal a pagar: $${totalCompra.toLocaleString('es-CO')} COP`);
-      carrito = [];
-      actualizarCarrito();
-    }
-
-    mostrarProductos();
-  </script>
-</body>
-</html>
